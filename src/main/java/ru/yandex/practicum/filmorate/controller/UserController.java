@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -18,6 +18,34 @@ public class UserController {
     @GetMapping
     public Collection<User> findAll() {
         return users.values();
+    }
+
+    @PostMapping
+    public User create(@Valid @RequestBody User user) {
+
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может содержать пробелы.");
+        }
+
+        if (user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+
+        user.setId(getNextId());
+        users.put(user.getId(), user);
+        return user;
+
+    }
+
+    // Вспомогательный метод для генерации идентификатора нового пользователя
+    private long getNextId() {
+        long currentMaxId = users.keySet()
+                .stream()
+                .mapToLong(id -> id)
+                .max()
+                .orElse(0);
+        return ++currentMaxId;
+
     }
 
 }
