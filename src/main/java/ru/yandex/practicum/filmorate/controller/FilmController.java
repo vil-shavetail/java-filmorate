@@ -26,11 +26,11 @@ public class FilmController {
 
         LocalDate validReleaseDate = LocalDate.of(1985, 12, 28);
 
-        if(film.getReleaseDate().isBefore(validReleaseDate)) {
+        if (film.getReleaseDate().isBefore(validReleaseDate)) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
         }
 
-        if(film.getDuration().isNegative() || film.getDuration().isZero()) {
+        if (film.getDuration().isNegative() || film.getDuration().isZero()) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
 
         }
