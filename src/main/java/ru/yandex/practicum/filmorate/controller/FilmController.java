@@ -43,7 +43,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film update(@RequestBody Film newFilm) {
+    public Film update(@Valid @RequestBody Film newFilm) {
 
         if (films.containsKey(newFilm.getId())) {
 
