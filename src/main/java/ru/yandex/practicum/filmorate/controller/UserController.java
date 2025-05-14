@@ -25,7 +25,10 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
 
+        log.info("Создание нового пользователя с id = " + user.getId() + ".");
+
         if (user.getLogin().contains(" ")) {
+            log.error("Ошибка создания пользователя, поле логин содержит пробелы.");
             throw new ValidationException("Логин не может содержать пробелы.");
         }
 
@@ -35,6 +38,8 @@ public class UserController {
 
         user.setId(getNextId());
         users.put(user.getId(), user);
+
+        log.info("Пользователь с id = " + user.getId() + " успешно создан.");
         return user;
 
     }
@@ -42,7 +47,10 @@ public class UserController {
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
 
+        log.info("Обновление данных пользователя с id = {}.", newUser.getId());
+
         if (newUser.getLogin().contains(" ")) {
+            log.error("Ошибка обновления данных пользователя - логин не может содержать пробелы.");
             throw new ValidationException("Логин не может содержать пробелы.");
         }
 
@@ -66,10 +74,12 @@ public class UserController {
                 oldUser.setEmail(newUser.getEmail());
             }
 
+            log.info("Данные пользователя с id = {} успешно обновлёны.", newUser.getId());
             return oldUser;
 
         }
 
+        log.error("Ошибка обновления данных пользователя: Пользователь с id = {} не найден.", newUser.getId());
         throw new ValidationException("Пользователь с id = " + newUser.getId() + " не найден.");
 
     }

@@ -26,24 +26,31 @@ public class FilmController {
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
 
+        log.info("Создание фильма с id = {}.", film.getId());
         LocalDate validReleaseDate = LocalDate.of(1895, 12, 28);
 
         if (film.getReleaseDate().isBefore(validReleaseDate)) {
+            log.error("Ошибка создания фильма с id = {}. Дата релиза фильма раньше 28 декабря 1985 года", film.getId());
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
         }
 
         if (film.getDuration() <= 0) {
+            log.error("Ошибка создания фильма с id = {}. Продолжительность фильма не является положительным числом.", film.getId());
             throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
         }
 
         film.setId(getNextId());
         films.put(film.getId(), film);
+
+        log.info("Фильм с id = {} успешно создан.", film.getId());
         return film;
 
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film newFilm) {
+
+        log.info("Обновление данных фильма с id = {}.", newFilm.getId());
 
         if (films.containsKey(newFilm.getId())) {
 
@@ -65,6 +72,7 @@ public class FilmController {
             return oldFilm;
         }
 
+        log.error("Ошибка обновления данных фильма: Фильм с id = {} не найден.", newFilm.getId());
         throw new ValidationException("Фильм с id = " + newFilm.getId() + " не найден.");
 
     }
