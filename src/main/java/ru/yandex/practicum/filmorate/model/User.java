@@ -25,7 +25,7 @@ public class User {
     @NotBlank(message = "Логин не должен быть пустым.")
     private String login;
 
-    private String name = "";
+    private String name;
 
     @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
