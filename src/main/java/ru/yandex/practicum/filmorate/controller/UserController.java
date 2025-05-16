@@ -63,7 +63,7 @@ public class UserController {
     }
 
     private static void validateUser(User user) {
-        if ( user.getName() == null || user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             log.info("Поскольку имя пользователя не указано, в качестве имени пользователя будет использован логин");
             user.setName(user.getLogin());
         }
