@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class InMemoryUserStorage implements UserStorage{
+public class InMemoryUserStorage implements UserStorage {
     @Override
     public Collection<User> getAListOfUsers() {
         return List.of();

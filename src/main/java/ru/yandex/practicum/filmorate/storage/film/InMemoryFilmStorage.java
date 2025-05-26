@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Collection<Film> getAListOfFilms() {
         return List.of();
