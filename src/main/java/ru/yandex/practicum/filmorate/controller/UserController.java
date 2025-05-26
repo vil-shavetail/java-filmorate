@@ -35,5 +35,5 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         return inMemoryUserStorage.updateUser(user);
     }
-    
+
 }
