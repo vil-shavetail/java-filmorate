@@ -50,6 +50,11 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
+    public User getUserById(Long userId) {
+        return users.get(userId);
+    }
+
     // Вспомогательный метод для генерации идентификатора нового пользователя
     private long getNextId() {
         long currentMaxId = users.keySet()

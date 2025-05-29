@@ -51,6 +51,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
+    public Film getFilmById(Long filmId) {
+        return films.get(filmId);
+    }
+
 
     // Вспомогательный метод для генерации идентификатора нового фильма.
     private long getNextId() {
