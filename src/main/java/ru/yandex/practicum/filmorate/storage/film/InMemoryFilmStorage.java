@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,13 +13,14 @@ import java.util.Map;
 
 @Slf4j
 @Component
+@Primary
 public class InMemoryFilmStorage implements FilmStorage {
 
     public static final LocalDate VALID_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final Map<Long, Film> films = new HashMap<>();
 
     @Override
-    public Collection<Film> getAListOfFilms() {
+    public Collection<Film> getACollectionOfFilms() {
         log.info("Запрос на получение списка фильмов.");
         return films.values();
     }
