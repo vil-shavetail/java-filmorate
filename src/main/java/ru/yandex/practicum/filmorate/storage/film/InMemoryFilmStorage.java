@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.storage.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -10,6 +12,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -43,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
         if (film.getId() == null || !films.containsKey(film.getId())) {
             log.error("Фильм с id = {} не найден", film.getId());
-            throw new ValidationException("Фильм с id = " + film.getId() + " не найден.");
+            throw new FilmNotFoundException("Фильм с id = " + film.getId() + " не найден.");
         }
 
         films.put(film.getId(), film);
@@ -53,7 +56,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(Long filmId) {
-        return films.get(filmId);
+        Film film = films.get(filmId);
+        return Optional.ofNullable(film)
+                .orElseThrow(() -> new UserNotFoundException("Фильм с id " + filmId + " не найден"));
     }
 
 
@@ -68,10 +73,19 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     // Вспомогательный метод для валидации даты релиза фильма.
-    private static void validateFilm(Film film) {
+    public static void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(VALID_RELEASE_DATE)) {
             log.error("Ошибка создания фильма с id = {}. Дата релиза фильма раньше 28 декабря 1985 года", film.getId());
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
+        }
+        if (film.getName() == null || film.getName().isBlank()) {
+            throw new ValidationException("Название фильма не может быть пустым.");
+        }
+        if (film.getDescription().length() > 200) {
+            throw new ValidationException("Максимальная длина описания - 200 символов.");
+        }
+        if (film.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность фильма должна быть положительным числом.");
         }
     }
 

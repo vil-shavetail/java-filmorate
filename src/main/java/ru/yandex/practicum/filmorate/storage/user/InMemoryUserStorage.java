@@ -3,12 +3,15 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -41,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage {
 
         if (user.getId() == null || !users.containsKey(user.getId())) {
             log.warn("Пользователь с id = {} не найден", user.getId());
-            throw new ValidationException("Пользователь с id = " + user.getId() + " не найден.");
+            throw new UserNotFoundException("Пользователь с id = " + user.getId() + " не найден.");
         }
 
         validateUser(user);
@@ -52,7 +55,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(Long userId) {
-        return users.get(userId);
+        User user = users.get(userId);
+        return Optional.ofNullable(user)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + userId + " не найден"));
     }
 
     // Вспомогательный метод для генерации идентификатора нового пользователя
@@ -65,10 +70,19 @@ public class InMemoryUserStorage implements UserStorage {
         return ++currentMaxId;
     }
 
-    private static void validateUser(User user) {
+    public static void validateUser(User user) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new ValidationException("Имейл не может быть пустым.");
+        }
+        if(user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isBlank()) {
+            throw new ValidationException("Логин не может быть пустым.");
+        }
         if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Поскольку имя пользователя не указано, в качестве имени пользователя будет использован логин");
+            log.info("Поскольку имя пользователя не указано, в качестве имени пользователя будет использован логин.");
             user.setName(user.getLogin());
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем.");
         }
     }
 }
