@@ -74,7 +74,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new ValidationException("Имейл не может быть пустым.");
         }
-        if(user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isBlank()) {
+        if (user.getLogin() == null || user.getLogin().contains(" ") || user.getLogin().isBlank()) {
             throw new ValidationException("Логин не может быть пустым.");
         }
         if (user.getName() == null || user.getName().isBlank()) {
