@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
+    public static final int FiLMS_COUNT_LIMIT = 10;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
@@ -54,7 +55,7 @@ public class FilmService {
     public List<Film> getACollectionOfTenPopularFilms(int count) {
         return filmStorage.getACollectionOfFilms().stream()
                 .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
-                .limit(count > 0 ? count : 10)
+                .limit(count > 0 ? count : FiLMS_COUNT_LIMIT)
                 .collect(Collectors.toList());
     }
 
