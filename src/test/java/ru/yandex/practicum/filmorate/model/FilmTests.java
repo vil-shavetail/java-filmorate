@@ -3,15 +3,13 @@ package ru.yandex.practicum.filmorate.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage.validateFilm;
 
 public class FilmTests {
-
-    private final InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
 
     @Test
     void testValidateModelValidFilm() {
@@ -21,7 +19,7 @@ public class FilmTests {
             film.setDescription("adipisicing");
             film.setReleaseDate(LocalDate.of(2000, 1, 1));
             film.setDuration(100);
-            filmStorage.validateFilm(film);
+            validateFilm(film);
         }, "Фильм, соответсвующий условиям валидации, не должен генерировать исключения.");
     }
 
@@ -33,7 +31,7 @@ public class FilmTests {
             film.setDescription("Description");
             film.setReleaseDate(LocalDate.of(1900, 3, 25));
             film.setDuration(200);
-            InMemoryFilmStorage.validateFilm(film);
+            validateFilm(film);
         });
 
         String expectedMessage = "Название фильма не может быть пустым.";
@@ -52,7 +50,7 @@ public class FilmTests {
                 "который за время «своего отсутствия», стал кандидатом Коломбани.");
             film.setReleaseDate(LocalDate.of(1900, 3, 25));
             film.setDuration(200);
-            filmStorage.validateFilm(film);
+            validateFilm(film);
         });
 
         String expectedMessage = "Максимальная длина описания - 200 символов.";
@@ -68,7 +66,7 @@ public class FilmTests {
             film.setDescription("Description");
             film.setReleaseDate(LocalDate.of(1890, 3, 25));
             film.setDuration(200);
-            filmStorage.validateFilm(film);
+            validateFilm(film);
         });
 
         String expectedMessage = "Дата релиза должна быть не раньше 28 декабря 1895 года.";
