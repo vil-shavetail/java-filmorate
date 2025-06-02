@@ -73,7 +73,7 @@ public class FilmService {
 
     public Film updateFilm(Film film) {
         return Optional.ofNullable(filmStorage.updateFilm(film))
-                .orElseThrow(()-> new FilmNotFoundException("Фильм с id " + film.getId() + " не найден."));
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + film.getId() + " не найден."));
     }
 
     public Film getFilmById(Long filmId) {
