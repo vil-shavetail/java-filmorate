@@ -2,12 +2,15 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +60,26 @@ public class FilmService {
                 .sorted(Comparator.comparingInt((Film f) -> f.getLikes().size()).reversed())
                 .limit(count > 0 ? count : FiLMS_COUNT_LIMIT)
                 .collect(Collectors.toList());
+    }
+
+    public Collection<Film> getACollectionOfFilms() {
+        return filmStorage.getACollectionOfFilms();
+    }
+
+    public Film createFilm(Film film) {
+        return Optional.ofNullable(filmStorage.createFilm(film))
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + film.getId() + " не найден."));
+    }
+
+    public Film updateFilm(Film film) {
+        return Optional.ofNullable(filmStorage.updateFilm(film))
+                .orElseThrow(()-> new FilmNotFoundException("Фильм с id " + film.getId() + " не найден."));
+    }
+
+    public Film getFilmById(Long filmId) {
+        Film film = filmStorage.getFilmById(filmId);
+        return Optional.ofNullable(film)
+                .orElseThrow(() -> new UserNotFoundException("Фильм с id " + filmId + " не найден."));
     }
 
 }

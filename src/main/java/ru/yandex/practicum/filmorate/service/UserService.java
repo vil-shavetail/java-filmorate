@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +25,7 @@ public class UserService {
         userStorage.updateUser(friend);
     }
 
-   public void deleteFromFriends(Long userId, Long friendId) {
+    public void deleteFromFriends(Long userId, Long friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
 
@@ -61,7 +58,22 @@ public class UserService {
     public User getUserById(Long id) {
         User user = userStorage.getUserById(id);
         return Optional.ofNullable(user)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден."));
+    }
+
+    public Collection<User> getCollectionOfUsers() {
+        return userStorage.getCollectionOfUsers();
+    }
+
+    public User createUser(User user) {
+        return Optional.ofNullable(userStorage.createUser(user))
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + user.getId() + " не найден."));
+    }
+
+    public User updateUser(User user) {
+        return Optional.ofNullable(userStorage.updateUser(user))
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + user.getId() + " не найден."));
+
     }
 
 }
