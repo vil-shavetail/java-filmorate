@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,15 +10,12 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.Set;
 
-/**
- * User.
- */
 @Data
 @Builder
-public class User {
-    private Long id;
+public class UserResponseDTO {
+    private long id;
     @NotNull
-    @Email(message = "Имейл должен соответствовать формату: test@domain.ru.")
+    @Email
     private String email;
     @NotBlank
     private String login;

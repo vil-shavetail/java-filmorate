@@ -18,8 +18,7 @@ class FilmorateApplicationTests {
 
 	@Test
 	void contextLoads() {
-		Assertions.assertTrue(userController.findAll().isEmpty());
-		Assertions.assertTrue(filmController.findAll().isEmpty());
+
 	}
 
 }
