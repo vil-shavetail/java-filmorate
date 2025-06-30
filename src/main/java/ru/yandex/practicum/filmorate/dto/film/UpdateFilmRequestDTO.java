@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dto.film;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.dto.film.genre.GenreRequestInFilmDTO;
 import ru.yandex.practicum.filmorate.dto.film.mpa.MpaRateRequestInFilmDTO;
@@ -15,6 +16,7 @@ public class UpdateFilmRequestDTO {
     private long id;
     @NotBlank
     private String name;
+    @Size(max = 200, message = "Максимальная длина описания - 200 символов.")
     private String description;
     @NotNull
     private LocalDate releaseDate;

@@ -25,7 +25,7 @@ public class UserRepository {
 
     public Optional<User> getUserById(long userId) {
 
-        String sqlString = "SELECT USER_ID, NAME, EMAIL, LOGIN, BIRTHDAY FROM USERS WHERE user_id=?";
+        String sqlString = "SELECT USER_ID, USER_NAME, USER_EMAIL, USER_LOGIN, USER_BIRTHDAY FROM USERS WHERE user_id=?";
 
         Optional<User> user;
         try {
@@ -62,7 +62,7 @@ public class UserRepository {
     }
 
     public boolean addFriend(long userId, long friendId) {
-        String sqlString = "INSERT INTO users_friends (user_id, friend_id) " +
+        String sqlString = "INSERT INTO user_friend (user_id, friend_id) " +
                 "values (?, ?)";
         int answer = jdbcTemplate.update(sqlString, userId, friendId);
 
@@ -71,13 +71,13 @@ public class UserRepository {
 
     public List<User> getUserFriends(long userId) {
 
-        String sqlString = "SELECT u.* FROM USERS u JOIN USERS_FRIENDS uf ON u.USER_ID = uf.FRIEND_ID WHERE uf.USER_ID=?";
+        String sqlString = "SELECT u.* FROM USERS u JOIN USER_FRIEND uf ON u.USER_ID = uf.FRIEND_ID WHERE uf.USER_ID=?";
 
         return jdbcTemplate.query(sqlString, userRowMapper, userId);
     }
 
     public boolean deleteFriend(long userId, long friendId) {
-        String sqlString = "DELETE FROM USERS_FRIENDS WHERE USER_ID=? AND FRIEND_ID=?";
+        String sqlString = "DELETE FROM USER_FRIEND WHERE USER_ID=? AND FRIEND_ID=?";
 
         return jdbcTemplate.update(sqlString, userId, friendId) > 0;
     }

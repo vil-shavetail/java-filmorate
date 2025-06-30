@@ -8,4 +8,5 @@ import lombok.Data;
 public class MpaRateResponseDTO {
     private int id;
     private String name;
+    private String description;
 }

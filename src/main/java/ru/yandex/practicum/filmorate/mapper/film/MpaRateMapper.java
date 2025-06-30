@@ -36,6 +36,7 @@ public class MpaRateMapper {
         return MpaRateResponseInFilmDTO.builder()
                 .id(mpaRate.getId())
                 .name(mpaRate.getName())
+//                .description(mpaRate.getDescription())
                 .build();
     }
 
@@ -43,6 +44,7 @@ public class MpaRateMapper {
         return MpaRateResponseDTO.builder()
                 .id(mpaRate.getId())
                 .name(mpaRate.getName())
+//                .description(mpaRate.getDescription())
                 .build();
     }
 }

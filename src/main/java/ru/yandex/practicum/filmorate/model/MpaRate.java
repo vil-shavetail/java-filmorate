@@ -8,5 +8,5 @@ import lombok.Data;
 public class MpaRate {
     private int id;
     private String name;
-    private String description;
+//    private String description;
 }
