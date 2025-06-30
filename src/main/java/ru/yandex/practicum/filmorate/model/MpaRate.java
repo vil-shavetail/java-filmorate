@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,6 +8,7 @@ import lombok.Data;
 @Builder
 public class MpaRate {
     private int id;
+    @NotNull
     private String name;
 //    private String description;
 }
