@@ -8,7 +8,6 @@ import lombok.Data;
 @Builder
 public class MpaRate {
     private int id;
-    @NotNull
     private String name;
 //    private String description;
 }
