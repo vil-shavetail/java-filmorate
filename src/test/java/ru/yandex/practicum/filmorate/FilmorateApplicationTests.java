@@ -1,23 +1,33 @@
 package ru.yandex.practicum.filmorate;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
+import ru.yandex.practicum.filmorate.dal.UserRepository;
+import ru.yandex.practicum.filmorate.mapper.user.UserRowMapper;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
-@SpringBootTest
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@JdbcTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import({UserDbStorage.class, UserRepository.class, UserRowMapper.class})
+
 class FilmorateApplicationTests {
 
-	@Autowired
-	UserController userController;
-
-	@Autowired
-	FilmController filmController;
+	private final UserDbStorage userStorage;
 
 	@Test
-	void contextLoads() {
-
+	void testFindUserByIdInEmptyBase() {
+		Optional<User> userOptional = userStorage.getUserById(1);
+		assertTrue(userOptional.isEmpty());
 	}
 
 }
