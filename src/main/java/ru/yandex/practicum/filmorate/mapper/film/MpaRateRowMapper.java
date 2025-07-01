@@ -16,7 +16,7 @@ public class MpaRateRowMapper implements RowMapper<MpaRate> {
         return MpaRate.builder()
                 .id(rs.getInt("MPA_RATE_ID"))
                 .name(rs.getString("MPA_RATE_NAME"))
-//                .description(rs.getString("MPA_RATE_DESCRIPTION"))
+                .description(rs.getString("MPA_RATE_DESCRIPTION"))
                 .build();
     }
 }

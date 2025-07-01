@@ -116,7 +116,7 @@ public class FilmRepository {
     }
 
     public Collection<MpaRate> getMpaRates() {
-        String queryMpaRates = "SELECT mpa_rate_id, mpa_rate_name FROM MPA_RATE";
+        String queryMpaRates = "SELECT mpa_rate_id, mpa_rate_name, mpa_rate_description FROM MPA_RATE";
         var mpaRates = jdbcTemplate.query(queryMpaRates, mpaRateRowMapper);
         return mpaRates;
     }
