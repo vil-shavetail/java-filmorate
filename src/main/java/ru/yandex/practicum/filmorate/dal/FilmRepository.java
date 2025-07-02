@@ -13,9 +13,9 @@ import ru.yandex.practicum.filmorate.model.MpaRate;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -138,17 +138,30 @@ public class FilmRepository {
 
 
     public void addFilmGenres(Long filmId, List<Genre> genres) {
-        String sqlString = "INSERT INTO FILM_GENRE(FILM_ID, GENRE_ID) " +
-                "values (?, ?)";
-
-        genres.stream()
+        List<Genre> distinctGenres = genres.stream()
                 .distinct()
-                .forEach(genre -> {
-                    if (!isGenreIndexOK(genre.getId())) {
-                        throw new NotFoundException("GENRE_ID index = " + genre.getId() + " not found");
-                    }
-                    jdbcTemplate.update(sqlString, filmId, genre.getId());
-                });
+                .collect(Collectors.toList());
+
+        distinctGenres.forEach(genre -> {
+            if (!isGenreIndexOK(genre.getId())) {
+                throw new NotFoundException("GENRE_ID index = " + genre.getId() + " not found");
+            }
+        });
+
+        if (distinctGenres.isEmpty()) {
+            return; // Нет данных для вставки
+        }
+
+        String sql = "INSERT INTO FILM_GENRE(FILM_ID, GENRE_ID) VALUES " +
+                distinctGenres.stream()
+                        .map(g -> "(?, ?)")
+                        .collect(Collectors.joining(", "));
+
+        List<Object> params = distinctGenres.stream()
+                .flatMap(g -> Stream.of(filmId, g.getId()))
+                .collect(Collectors.toList());
+
+        jdbcTemplate.update(sql, params.toArray());
     }
 
     public List<Genre> getFilmGenres(Long filmId) {
@@ -219,5 +232,53 @@ public class FilmRepository {
                 "WHERE FILM_ID=? AND USER_ID=?";
 
         return jdbcTemplate.update(deleteUserLikeSql, filmId, userId) > 0;
+    }
+
+    public Map<Long, List<Genre>> getFilmGenresByFilmIds(Collection<Long> filmIds) {
+        if (filmIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        String inClause = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String query = "SELECT fg.FILM_ID, g.GENRE_ID, g.GENRE_NAME " +
+                "FROM FILM_GENRE fg " +
+                "JOIN GENRE g ON fg.GENRE_ID = g.GENRE_ID " +
+                "WHERE fg.FILM_ID IN (" + inClause + ") " +
+                "ORDER BY fg.FILM_ID, g.GENRE_ID";
+
+        Map<Long, List<Genre>> result = new HashMap<>();
+
+        jdbcTemplate.query(query, filmIds.toArray(), rs -> {
+            Long filmId = rs.getLong("film_id");
+            Genre genre = new Genre(
+                    rs.getInt("genre_id"),
+                    rs.getString("genre_name")
+            );
+
+            result.computeIfAbsent(filmId, k -> new ArrayList<>()).add(genre);
+        });
+
+        return result;
+    }
+
+    public Map<Long, Set<Long>> getFilmLikesByFilmIds(Collection<Long> filmIds) {
+        if (filmIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        String inClause = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String query = "SELECT FILM_ID, USER_ID FROM film_like " +
+                "WHERE FILM_ID IN (" + inClause + ")";
+
+        Map<Long, Set<Long>> result = new HashMap<>();
+
+        jdbcTemplate.query(query, filmIds.toArray(), rs -> {
+            Long filmId = rs.getLong("film_id");
+            Long userId = rs.getLong("user_id");
+
+            result.computeIfAbsent(filmId, k -> new HashSet<>()).add(userId);
+        });
+
+        return result;
     }
 }

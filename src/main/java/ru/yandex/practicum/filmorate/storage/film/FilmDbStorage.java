@@ -8,8 +8,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MpaRate;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Qualifier("filmDbStorage")
@@ -88,8 +88,21 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void addCollectionsToFilms(Collection<Film> films) {
-        films.forEach(film -> film.setGenres(filmRepository.getFilmGenres(film.getId())));
-        films.forEach(film -> film.setLikes(filmRepository.getFilmUserLikes(film.getId())));
+        if (films == null || films.isEmpty()) {
+            return;
+        }
+
+        Set<Long> filmIds = films.stream()
+                .map(Film::getId)
+                .collect(Collectors.toSet());
+
+        Map<Long, List<Genre>> genresByFilmId = filmRepository.getFilmGenresByFilmIds(filmIds);
+        Map<Long, Set<Long>> likesByFilmId = filmRepository.getFilmLikesByFilmIds(filmIds);
+        films.forEach(film -> {
+            film.setGenres(genresByFilmId.getOrDefault(film.getId(), Collections.emptyList()));
+            Set<Long> likes = likesByFilmId.getOrDefault(film.getId(), Collections.emptySet());
+            film.setLikes(new ArrayList<>(likes));
+        });
     }
 
     private void addCollectionsToFilm(Film film) {
