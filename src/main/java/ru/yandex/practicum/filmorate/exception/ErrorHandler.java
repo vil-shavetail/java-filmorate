@@ -10,19 +10,25 @@ public class ErrorHandler {
 
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(ValidationException e) {
-        return new ErrorResponse("Validation error", e.getMessage());
+    public ErrorResponse exceptionHandler(ValidationException e) {
+        return new ErrorResponse("ValidationException", e.getMessage());
     }
 
-    @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class})
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(RuntimeException e) {
-        return new ErrorResponse("Not found", e.getMessage());
+    public ErrorResponse notFoundExceptionHandler(NotFoundException e) {
+        return new ErrorResponse("NotFoundException", e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({StorageException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
-        return new ErrorResponse("Внутренняя ошибка сервера", "Произошла непредвиденная ошибка");
+    public ErrorResponse storageExceptionHandler(StorageException e) {
+        return new ErrorResponse("StorageException", e.getMessage());
+    }
+
+    @ExceptionHandler({RuntimeException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse runtimeExceptionHandler(StorageException e) {
+        return new ErrorResponse("RuntimeException", e.getMessage());
     }
 }
