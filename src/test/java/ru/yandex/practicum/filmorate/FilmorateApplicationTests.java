@@ -39,7 +39,7 @@ class FilmorateApplicationTests {
 	private final UserDbStorage userStorage;
 
 	@BeforeAll
-	public void SetUp() {
+	public void setUp() {
 		userStorage.createUser(buildUser("Алексей"));
 		userStorage.createUser(buildUser("Сергей"));
 
